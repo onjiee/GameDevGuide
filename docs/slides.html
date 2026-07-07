@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GitHub Pages — สไลด์สำหรับมือใหม่</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #22263a;
+    --border: #2e3347;
+    --text: #e8eaf2;
+    --muted: #7880a0;
+    --green: #4ade80;
+    --green-dim: #1a3a2a;
+    --green-border: #2d5a3d;
+    --blue: #60a5fa;
+    --blue-dim: #1a2a3a;
+    --blue-border: #2d4a6a;
+    --amber: #fbbf24;
+    --amber-dim: #2a1f0a;
+    --amber-border: #4a3a1a;
+    --red: #f87171;
+    --red-dim: #2a1a1a;
+    --red-border: #4a2a2a;
+    --purple: #c084fc;
+    --purple-dim: #1e1a2e;
+    --accent: #818cf8;
+    --radius: 10px;
+    --mono: 'Fira Code', monospace;
+    --sans: 'Sarabun', sans-serif;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 1.5rem 1rem 3rem;
+  }
+
+  /* ── progress bar ── */
+  .progress-wrap {
+    width: 100%;
+    max-width: 780px;
+    display: flex;
+    gap: 5px;
+    margin-bottom: 1.5rem;
+  }
+  .progress-wrap span {
+    height: 3px;
+    flex: 1;
+    border-radius: 2px;
+    background: var(--border);
+    transition: background .3s;
+  }
+  .progress-wrap span.done { background: var(--accent); }
+
+  /* ── slide shell ── */
+  .deck {
+    width: 100%;
+    max-width: 780px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2rem 2rem 1.5rem;
+    min-height: 480px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .slide { display: none; flex: 1; flex-direction: column; }
+  .slide.active { display: flex; }
+
+  .slide-tag {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: .5rem;
+  }
+  .slide-tag .chip {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    margin-right: 6px;
+  }
+  .chip-root { background: var(--purple-dim); color: var(--purple); border: 1px solid #4a3a6a; }
+  .chip-docs { background: var(--blue-dim); color: var(--blue); border: 1px solid var(--blue-border); }
+  .chip-both { background: var(--surface2); color: var(--muted); border: 1px solid var(--border); }
+
+  h2 {
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 1.25rem;
+    line-height: 1.3;
+  }
+
+  /* ── tree ── */
+  .tree {
+    font-family: var(--mono);
+    font-size: 13.5px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.1rem 1.4rem;
+    line-height: 2;
+    flex-shrink: 0;
+  }
+  .tree .note { font-family: var(--sans); font-size: 12px; color: var(--muted); margin-left: 4px; }
+  .hl-g  { background: var(--green-dim); color: var(--green); border-radius: 4px; padding: 0 6px; }
+  .hl-b  { background: var(--blue-dim);  color: var(--blue);  border-radius: 4px; padding: 0 6px; }
+  .hl-a  { background: var(--amber-dim); color: var(--amber); border-radius: 4px; padding: 0 6px; }
+  .hl-p  { background: var(--purple-dim);color: var(--purple);border-radius: 4px; padding: 0 6px; }
+
+  /* ── code ── */
+  .code {
+    font-family: var(--mono);
+    font-size: 13px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.25rem;
+    line-height: 1.9;
+  }
+  .ct { color: var(--blue); }
+  .ca { color: var(--amber); }
+  .cv { color: var(--green); }
+  .cc { color: var(--muted); }
+
+  /* ── cards ── */
+  .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .cards.three { grid-template-columns: 1fr 1fr 1fr; }
+  .card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: .9rem 1.1rem;
+  }
+  .card h3 { font-size: 14px; font-weight: 600; margin-bottom: .4rem; color: var(--text); }
+  .card p  { font-size: 13px; color: #9ea5c0; line-height: 1.6; }
+  .card.ok  { border-color: var(--green-border); }
+  .card.bad { border-color: var(--red-border); }
+  .card.info { border-color: var(--blue-border); }
+
+  /* ── badge ── */
+  .badge {
+    display: inline-block;
+    font-size: 11px; font-weight: 600;
+    border-radius: 4px; padding: 2px 8px;
+    margin-bottom: .5rem;
+  }
+  .badge-g { background: var(--green-dim); color: var(--green); }
+  .badge-b { background: var(--blue-dim);  color: var(--blue);  }
+  .badge-r { background: var(--red-dim);   color: var(--red);   }
+  .badge-a { background: var(--amber-dim); color: var(--amber); }
+
+  /* ── info box ── */
+  .info-box {
+    border-radius: var(--radius);
+    padding: .8rem 1.1rem;
+    font-size: 13.5px;
+    line-height: 1.65;
+    margin-top: .9rem;
+    flex-shrink: 0;
+  }
+  .info-box.blue   { background: var(--blue-dim);  border: 1px solid var(--blue-border);  color: #93c5fd; }
+  .info-box.green  { background: var(--green-dim); border: 1px solid var(--green-border); color: #86efac; }
+  .info-box.amber  { background: var(--amber-dim); border: 1px solid var(--amber-border); color: #fcd34d; }
+  .info-box.red    { background: var(--red-dim);   border: 1px solid var(--red-border);   color: #fca5a5; }
+
+  /* ── rule rows ── */
+  .rules { display: flex; flex-direction: column; gap: 0; }
+  .rule {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: .85rem 0;
+    border-top: 1px solid var(--border);
+  }
+  .rule:first-child { border-top: none; }
+  .rule-num {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--blue-dim); color: var(--blue);
+    border: 1px solid var(--blue-border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 600; flex-shrink: 0; margin-top: 1px;
+  }
+  .rule-body { font-size: 14px; color: var(--text); line-height: 1.6; }
+  .rule-sub  { font-size: 12px; color: var(--muted); margin-top: 2px; font-family: var(--mono); }
+
+  /* ── url pill ── */
+  .url {
+    display: inline-block;
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 20px; padding: 3px 12px;
+    font-family: var(--mono); font-size: 12.5px; color: #9ea5c0;
+    margin: 3px 3px 0 0;
+  }
+
+  /* ── compare (2 column) ── */
+  .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; flex: 1; }
+  .compare-col h3 {
+    font-size: 14px; font-weight: 600; margin-bottom: .75rem;
+    padding-bottom: .5rem; border-bottom: 1px solid var(--border);
+  }
+
+  /* ── nav ── */
+  .nav {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 1.75rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .nav button {
+    padding: 8px 22px; border-radius: 8px;
+    border: 1px solid var(--border);
+    background: transparent; color: var(--text);
+    cursor: pointer; font-size: 14px; font-family: var(--sans);
+    transition: background .15s, border-color .15s;
+  }
+  .nav button:hover:not(:disabled) { background: var(--surface2); border-color: var(--accent); }
+  .nav button:disabled { opacity: .3; cursor: default; }
+  .nav .ctr { font-size: 13px; color: var(--muted); }
+
+  hr.div { border: none; border-top: 1px solid var(--border); margin: 1rem 0; }
+
+  /* ── responsive ── */
+  @media (max-width: 600px) {
+    .deck { padding: 1.25rem 1.25rem 1rem; }
+    .cards, .compare { grid-template-columns: 1fr; }
+    .cards.three { grid-template-columns: 1fr; }
+    h2 { font-size: 18px; }
+    .tree, .code { font-size: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="progress-wrap" id="prog"></div>
+
+<div class="deck">
+
+  <!-- ══════════════════ SLIDE 0 — Overview ══════════════════ -->
+  <div class="slide active" id="s0">
+    <div class="slide-tag"><span class="chip chip-both">ภาพรวม</span>หน้า 1 / 10</div>
+    <h2>GitHub Pages คืออะไร?</h2>
+    <div class="cards">
+      <div class="card info">
+        <div class="badge badge-b">GitHub Repo</div>
+        <h3>📁 โฟลเดอร์โปรเจกต์</h3>
+        <p>เก็บไฟล์ทั้งหมดไว้บน GitHub เหมือนโฟลเดอร์บนเครื่อง แต่อยู่บน cloud</p>
+      </div>
+      <div class="card info">
+        <div class="badge badge-b">GitHub Pages</div>
+        <h3>🌐 เปิดเป็นเว็บได้เลย</h3>
+        <p>GitHub เอาไฟล์ใน repo ไปแสดงเป็นเว็บไซต์ให้ทุกคนเข้าได้ ฟรี!</p>
+      </div>
+    </div>
+    <div class="info-box blue" style="margin-top:1rem">
+      URL ที่ได้: <span class="url">username.github.io/ชื่อ-repo/</span>
+    </div>
+    <div class="info-box amber" style="margin-top:.75rem">
+      ⚙️ ตั้งค่าที่ไหน? → <strong>Settings → Pages → Branch: main → เลือก Folder</strong>
+    </div>
+    <div style="margin-top:1rem; font-size:13.5px; color:var(--muted); line-height:1.7">
+      Folder ที่ให้เลือกมี 2 แบบ: <strong style="color:var(--purple)">/ (root)</strong> และ <strong style="color:var(--blue)">/docs</strong> — สไลด์นี้จะสอนทั้งสองแบบ
+    </div>
+  </div>
+
+  <!-- ══════════════════ SLIDE 1 — index.html คืออะไร ══════════════════ -->
+  <div class="slide" id="s1">
+    <div class="slide-tag"><span class="chip chip-both">พื้นฐาน</span>หน้า 2 / 10</div>
+    <h2>index.html คืออะไร — ทำไมต้องมี?</h2>
+    <div class="cards">
+      <div class="card">
+        <h3>📁 folder = ตึก</h3>
+        <p>Lab01/ คือตึกหลังหนึ่ง มีไฟล์ต่างๆ อยู่ข้างใน</p>
+      </div>
+      <div class="card">
+        <h3>🚪 index.html = ประตูหน้า</h3>
+        <p>เมื่อเปิด URL ที่ลงท้ายด้วย <code style="font-family:var(--mono)">/</code> browser จะหา <code style="font-family:var(--mono)">index.html</code> ก่อนเสมอ</p>
+      </div>
+    </div>
+    <hr class="div">
+    <div class="cards" style="margin-top:0">
+      <div class="card ok">
+        <div class="badge badge-g">✓ มี index.html</div>
+        <p>เปิด <code style="font-family:var(--mono)">site.io/Lab01/</code><br>→ เจอหน้าเว็บทันที</p>
+      </div>
+      <div class="card bad">
+        <div class="badge badge-r">✗ ไม่มี index.html</div>
+        <p>เปิด <code style="font-family:var(--mono)">site.io/Lab01/</code><br>→ Error 404 ทันที</p>
+      </div>
+    </div>
+    <div class="info-box amber">
+      💡 กฎจำง่าย — ทุก folder ต้องมี <code style="font-family:var(--mono)">index.html</code> อย่างน้อย 1 ไฟล์เสมอ
+    </div>
+  </div>
+
+  <!-- ══════════════════ SLIDE 2 — Root Mode Structure ══════════════════ -->
+  <div class="slide" id="s2">
+    <div class="slide-tag"><span class="chip chip-root">Root Mode</span>หน้า 3 / 10</div>
+    <h2>Root Mode — โครงสร้าง folder</h2>
+    <div class="tree">
+      <div>📁 my-website/ <span class="note">← repo ทั้งหมด</span></div>
+      <div>&nbsp;&nbsp;├── <span class="hl-g">index.html</span> <span class="note">← homepage (ต้องมี!)</span></div>
+      <div>&nbsp;&nbsp;├── style.css <span class="note">← ตกแต่งหน้าเว็บ (optional)</span></div>
+      <div>&nbsp;&nbsp;├── 📁 <span class="hl-p">Lab01/</span></div>
+      <div>&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;├── <span class="hl-g">index.html</span> <span class="note">← ประตูหน้าของ Lab01</span></div>
+      <div>&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;├── lab01.html <span class="note">← Godot export</span></div>
+      <div>&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;└── lab01.js, lab01.wasm ...</div>
+      <div>&nbsp;&nbsp;├── 📁 <span class="hl-p">Lab02/</span></div>
+      <div>&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;└── <span class="hl-g">index.html</span>, lab02.html ...</div>
+      <div>&nbsp;&nbsp;└── 📁 <span class="hl-p">LabN/</span></div>
+    </div>
+    <div class="info-box blue">
+      🌐 URL ที่ได้ → <span class="url">username.github.io/my-website/</span> <span class="url">username.github.io/my-website/Lab01/</span>
+    </div>
+    <div class="info-box green">
+      ⚙️ ตั้งค่า: Settings → Pages → Branch: main → <strong>/ (root)</strong>
+    </div>
+  </div>
+
+  <!-- ══════════════════ SLIDE 3 — Docs Mode Structure ══════════════════ -->
+  <div class="slide" id="s3">
+    <div class="slide-tag"><span class="chip chip-docs">Docs Mode</span>หน้า 4 / 10</div>
+    <h2>Docs Mode — โครงสร้าง folder</h2>
+    <div class="tree">
+      <div>📁 my-website/ <span class="note">← repo ทั้งหมด</span></div>
+      <div>&nbsp;&nbsp;├── README.md <span class="note">← อยู่นอก docs ได้</span></div>
+      <div>&nbsp;&nbsp;├── main.py, server.py ... <span class="note">← โค้ดอื่นๆ แยกไว้ได้</span></div>
+      <div>&nbsp;&nbsp;└── 📁 <span class="hl-b">docs/</span> <span class="note">← GitHub Pages serve จากที่นี่</span></div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── <span class="hl-g">index.html</span> <span class="note">← homepage</span></div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── 📁 <span class="hl-p">Lab01/</span></div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;├── <span class="hl-g">index.html</span></div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;└── lab01.html, lab01.js ...</div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── 📁 <span class="hl-p">LabN/</span></div>
+    </div>
+    <div class="info-box blue">
+      🌐 URL ที่ได้ → <span class="url">username.github.io/my-website/</span> <span class="url">username.github.io/my-website/Lab01/</span><br>
+      <span style="font-size:12px; color:var(--muted); margin-top:4px; display:block">URL เหมือน Root Mode เป๊ะ — ต่างกันแค่ที่เก็บไฟล์</span>
+    </div>
+    <div class="info-box green">
+      ⚙️ ตั้งค่า: Settings → Pages → Branch: main → <strong>/docs</strong>
+    </div>
+  </div>
+
+  <!-- ══════════════════ SLIDE 4 — Root vs Docs ══════════════════ -->
+  <div class="slide" id="s4">
+    <div class="slide-tag"><span class="chip chip-both">เปรียบเทียบ</span>หน้า 5 / 10</div>
+    <h2>Root vs Docs — เลือกแบบไหนดี?</h2>
+    <div class="compare">
+      <div class="compare-col">
+        <h3 style="color:var(--purple)">📂 Root Mode ( / )</h3>
+        <div class="rules">
+          <div class="rule">
+            <div class="rule-num" style="background:var(--purple-dim);color:var(--purple);border-color:#4a3a6a">✓</div>
+            <div class="rule-body">เริ่มต้นง่ายที่สุด<div class="rule-sub">วางไฟล์ที่ root ได้เลย</div></div>
+          </div>
+          <div class="rule">
+            <div class="rule-num" style="background:var(--purple-dim);color:var(--purple);border-color:#4a3a6a">✓</div>
+            <div class="rule-body">เหมาะกับ repo ที่ทำเว็บอย่างเดียว<div class="rule-sub">ไม่มีโค้ดอื่นปะปน</div></div>
+          </div>
+          <div class="rule">
+            <div class="rule-num" style="background:var(--red-dim);color:var(--red);border-color:var(--red-border)">✗</div>
+            <div class="rule-body">ไฟล์รก ถ้ามีโค้ดอื่นด้วย<div class="rule-sub">Python, README, .py ปะปนกับ HTML</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="compare-col">
+        <h3 style="color:var(--blue)">📁 Docs Mode ( /docs )</h3>
+        <div class="rules">
+          <div class="rule">
+            <div class="rule-num" style="background:var(--blue-dim);color:var(--blue);border-color:var(--blue-border)">✓</div>
+            <div class="rule-body">แยกไฟล์เว็บออกจากโค้ดอื่น<div class="rule-sub">docs/ = เว็บ / ที่เหลือ = โค้ด</div></div>
+          </div>
+          <div class="rule">
+            <div class="rule-num" style="background:var(--blue-dim);color:var(--blue);border-color:var(--blue-border)">✓</div>
+            <div class="rule-body">เหมาะกับ repo ที่มีทั้งเว็บ + backend<div class="rule-sub">เช่น มี Python, Node.js ด้วย</div></div>
+          </div>
+          <div class="rule">
+            <div class="rule-num" style="background:var(--red-dim);color:var(--red);border-color:var(--red-border)">✗</div>
+            <div class="rule-body">ต้องจำว่าทุกอย่างอยู่ใน docs/<div class="rule-sub">ลืมใส่ใน docs/ → เว็บไม่อัปเดต</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="info-box amber">
+      💡 ถ้าทำแค่เว็บอย่างเดียว → ใช้ <strong>Root</strong> ก็พอ / ถ้ามีโปรเจกต์อื่นด้วย → ใช้ <strong>Docs</strong>
+    </div>
+  </div>
+
+  <!-- ══════════════════ SLIDE 5 — folder → URL ══════════════════ -->
+  <div class="slide" id="s5">
+    <div class="slide-tag"><span class="chip chip-both">กฎสำคัญ</span>หน้า 6 / 10</div>
+    <h2>ชื่อ folder = URL — ความสัมพันธ์</h2>
+    <div class="rules">
+      <div class="rule">
+        <div class="rule-num">1</div>
+        <div class="rule-body">
+          เข้า URL หลัก <span class="url">site.io/my-website/</span>
+          <div class="rule-sub">→ โหลด index.html ที่ root (หรือ docs/) เสมอ</div>
+        </div>
+      </div>
+      <div class="rule">
+        <div class="rule-num">2</div>
+        <div class="rule-body">
+          เข้า <span class="url">site.io/my-website/Lab01/</span>
+          <div class="rule-sub">→ โหลด Lab01/index.html — ชื่อ folder กลายเป็น path ใน URL</div>
+        </div>
+      </div>
+      <div class="rule">
+        <div class="rule-num">3</div>
+        <div class="rule-body">
+          เข้า <span class="url">site.io/my-website/Lab01.html</span>
+          <div class="rule-sub">→ ไฟล์ .html ตรงๆ — ใช้ได้ถ้า Godot export ออกมาเป็นไฟล์เดียวที่ root</div>
+        </div>
+      </div>
+      <div class="rule">
+        <div class="rule-num">!</div>
+        <div class="rule-body" style="color:var(--red)">
+          ตัวพิมพ์เล็ก/ใหญ่สำคัญ
+          <div class="rule-sub" style="color:var(--muted)">lab01 ≠ Lab01 ≠ LAB01 — GitHub ถือว่าคนละ path</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════ SLIDE 6 — Lab structure ══════════════════ -->
+  <div class="slide" id="s6">
+    <div class="slide-tag"><span class="chip chip-both">โครงสร้าง Lab</span>หน้า 7 / 10</div>
+    <h2>ใน Lab folder มีอะไรบ้าง?</h2>
+    <div class="tree">
+      <div>📁 Lab01/</div>
+      <div>&nbsp;&nbsp;├── <span class="hl-g">index.html</span> <span class="note">← เราสร้างเอง — "ประตูหน้า"</span></div>
+      <div>&nbsp;&nbsp;├── <span class="hl-b">lab01.html</span> <span class="note">← Godot export — ตัวเกม/งานจริง</span></div>
+      <div>&nbsp;&nbsp;├── <span class="hl-a">lab01.js</span> <span class="note">← Godot export</span></div>
+      <div>&nbsp;&nbsp;└── <span class="hl-a">lab01.wasm</span> <span class="note">← Godot export</span></div>
+    </div>
+    <hr class="div">
+    <div class="cards">
+      <div class="card ok">
+        <div class="badge badge-g">index.html — เราสร้าง</div>
+        <h3>หน้าแนะนำ Lab</h3>
+        <p>ชื่องาน, คำอธิบาย, ปุ่มเล่น, ปุ่มกลับ homepage</p>
+      </div>
+      <div class="card info">
+        <div class="badge badge-b">lab01.html — Godot export</div>
+        <h3>ตัวเกม / งานจริง</h3>
+        <p>Godot สร้างให้ อย่าแก้ — โหลด .js และ .wasm เพื่อรันเกม</p>
+      </div>
+    </div>
+    <div class="info-box green">
+      🔗 flow: Homepage → <code style="font-family:var(--mono)">/Lab01/</code> (index.html) → กดปุ่มเล่น → lab01.html รันเกม
+    </div>
+  </div>
+
+  <!-- ══════════════════ SLIDE 7 — 2 วิธี link ══════════════════ -->
+  <div class="slide" id="s7">
+    <div class="slide-tag"><span class="chip chip-both">2 วิธี Link ไป Lab</span>หน้า 8 / 10</div>
+    <h2>เชื่อมจาก Homepage ไป Lab — 2 วิธี</h2>
+    <div class="compare">
+      <div class="compare-col">
+        <h3 style="color:var(--green)">วิธีที่ 1 — Redirect (กดปุ๊บไปเลย)</h3>
+        <p style="font-size:13px; color:var(--muted); margin-bottom:.75rem">index.html ใน Lab01/ มีแค่บรรทัดเดียว กดลิงก์แล้วไปเกมทันที</p>
+        <div class="code">
+<span class="cc">&lt;!-- Lab01/index.html --&gt;</span>
+<span class="ct">&lt;meta</span> <span class="ca">http-equiv=</span><span class="cv">"refresh"</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="ca">content=</span><span class="cv">"0; url=lab01.html"</span><span class="ct">&gt;</span>
+        </div>
+        <div class="info-box green" style="margin-top:.75rem; font-size:12.5px">
+          ✓ ง่าย ไม่ต้องทำหน้าพิเศษ<br>คนใช้กดลิงก์ → เกมโหลดเลย
+        </div>
+      </div>
+      <div class="compare-col">
+        <h3 style="color:var(--blue)">วิธีที่ 2 — Intro Page (มีหน้าแนะนำ)</h3>
+        <p style="font-size:13px; color:var(--muted); margin-bottom:.75rem">index.html ใน Lab01/ มีหน้าอธิบาย Lab พร้อมปุ่มเล่นและปุ่มกลับ</p>
+        <div class="code">
+<span class="cc">&lt;!-- Lab01/index.html --&gt;</span>
+<span class="ct">&lt;h1&gt;</span>Lab 01 — ชื่องาน<span class="ct">&lt;/h1&gt;</span>
+<span class="ct">&lt;p&gt;</span>คำอธิบายสั้นๆ<span class="ct">&lt;/p&gt;</span>
+<span class="ct">&lt;a</span> <span class="ca">href=</span><span class="cv">"lab01.html"</span><span class="ct">&gt;</span>▶ เล่น<span class="ct">&lt;/a&gt;</span>
+<span class="ct">&lt;a</span> <span class="ca">href=</span><span class="cv">"../"</span><span class="ct">&gt;</span>← กลับ<span class="ct">&lt;/a&gt;</span>
+        </div>
+        <div class="info-box blue" style="margin-top:.75rem; font-size:12.5px">
+          ✓ ดูเป็นมืออาชีพกว่า<br><code style="font-family:var(--mono)">../</code> = ขึ้นไป 1 folder (กลับ root)
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════ SLIDE 8 — Homepage code ══════════════════ -->
+  <div class="slide" id="s8">
+    <div class="slide-tag"><span class="chip chip-both">โค้ด Homepage</span>หน้า 9 / 10</div>
+    <h2>Homepage — โค้ดเชื่อมไป Lab แต่ละอัน</h2>
+    <div style="font-size:13px; color:var(--muted); margin-bottom:.75rem">index.html ที่ root (หรือ docs/) — รายการลิงก์ไปแต่ละ Lab</div>
+    <div class="code">
+<span class="ct">&lt;ul&gt;</span>
+&nbsp;&nbsp;<span class="ct">&lt;li&gt;&lt;a</span> <span class="ca">href=</span><span class="cv">"Lab01/"</span><span class="ct">&gt;</span>Lab 01<span class="ct">&lt;/a&gt;&lt;/li&gt;</span>  <span class="cc">← แบบ folder</span>
+&nbsp;&nbsp;<span class="ct">&lt;li&gt;&lt;a</span> <span class="ca">href=</span><span class="cv">"Lab02/"</span><span class="ct">&gt;</span>Lab 02<span class="ct">&lt;/a&gt;&lt;/li&gt;</span>
+&nbsp;&nbsp;<span class="ct">&lt;li&gt;&lt;a</span> <span class="ca">href=</span><span class="cv">"Lab03.html"</span><span class="ct">&gt;</span>Lab 03<span class="ct">&lt;/a&gt;&lt;/li&gt;</span>  <span class="cc">← แบบ .html ตรงๆ</span>
+<span class="ct">&lt;/ul&gt;</span>
+    </div>
+    <hr class="div">
+    <div style="font-size:13px; color:var(--muted); margin-bottom:.5rem">⚠️ โค้ดที่ผิด — tag ปิดไม่ครบ</div>
+    <div class="code" style="border-color:var(--red-border); background:var(--red-dim)">
+<span class="cc">&lt;!-- ผิด: &lt;a&gt; อยู่นอก &lt;li&gt; และ &lt;li&gt;&lt;/li&gt; ว่างเปล่า --&gt;</span>
+<span class="ct">&lt;ul&gt;</span>
+&nbsp;&nbsp;<span style="color:var(--red)">&lt;li&gt;&lt;/li&gt;</span><span class="ct">&lt;a</span> <span class="ca">href=</span><span class="cv">"lab01.html"</span><span class="ct">&gt;</span>Lab01<span class="ct">&lt;/a&gt;</span>
+<span class="ct">&lt;/ul&gt;</span>
+    </div>
+    <div class="info-box amber">
+      ✏️ แก้ให้ถูก: <code style="font-family:var(--mono)">&lt;li&gt;</code> ต้องครอบ <code style="font-family:var(--mono)">&lt;a&gt;</code> ไว้ข้างใน และต้องปิด <code style="font-family:var(--mono)">&lt;/li&gt;</code> ทุกอัน
+    </div>
+  </div>
+
+  <!-- ══════════════════ SLIDE 9 — Summary ══════════════════ -->
+  <div class="slide" id="s9">
+    <div class="slide-tag"><span class="chip chip-both">สรุป</span>หน้า 10 / 10</div>
+    <h2>สรุป — 5 กฎจำให้ขึ้นใจ</h2>
+    <div class="rules">
+      <div class="rule">
+        <div class="rule-num">1</div>
+        <div class="rule-body">ทุก folder <strong>ต้องมี index.html</strong>
+          <div class="rule-sub">ไม่มี = 404 ทันที ไม่มีข้อยกเว้น</div>
+        </div>
+      </div>
+      <div class="rule">
+        <div class="rule-num">2</div>
+        <div class="rule-body">ชื่อ folder = URL path
+          <div class="rule-sub">📁 Lab01/ → site.io/…/Lab01/ — ตั้งชื่อดีตั้งแต่ต้น</div>
+        </div>
+      </div>
+      <div class="rule">
+        <div class="rule-num">3</div>
+        <div class="rule-body">Root vs Docs — URL เหมือนกัน แค่ที่เก็บไฟล์ต่างกัน
+          <div class="rule-sub">Root → ไฟล์อยู่ที่ / &nbsp;|&nbsp; Docs → ไฟล์อยู่ใน /docs/</div>
+        </div>
+      </div>
+      <div class="rule">
+        <div class="rule-num">4</div>
+        <div class="rule-body">Link ไป Lab ได้ 2 แบบ
+          <div class="rule-sub">Redirect (meta refresh) → ไปเลย &nbsp;|&nbsp; Intro page → มีหน้าแนะนำก่อน</div>
+        </div>
+      </div>
+      <div class="rule">
+        <div class="rule-num">5</div>
+        <div class="rule-body">tag HTML ต้องปิดครบ
+          <div class="rule-sub">&lt;li&gt;&lt;a href="…"&gt;ชื่อ&lt;/a&gt;&lt;/li&gt; — &lt;a&gt; ต้องอยู่ใน &lt;li&gt; เสมอ</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Nav ── -->
+  <div class="nav">
+    <button id="btn-prev" onclick="go(-1)" disabled>← ก่อนหน้า</button>
+    <span class="ctr" id="ctr">1 / 10</span>
+    <button id="btn-next" onclick="go(1)">ถัดไป →</button>
+  </div>
+
+</div><!-- /deck -->
+
+<script>
+  var cur = 0, total = 10;
+  var prog = document.getElementById('prog');
+  for(var i = 0; i < total; i++){
+    var s = document.createElement('span');
+    prog.appendChild(s);
+  }
+  function render(){
+    document.querySelectorAll('.slide').forEach(function(el,i){
+      el.classList.toggle('active', i === cur);
+    });
+    document.querySelectorAll('.progress-wrap span').forEach(function(el,i){
+      el.classList.toggle('done', i <= cur);
+    });
+    document.getElementById('ctr').textContent = (cur+1) + ' / ' + total;
+    document.getElementById('btn-prev').disabled = cur === 0;
+    document.getElementById('btn-next').disabled = cur === total - 1;
+    window.scrollTo({top: 0, behavior: 'smooth'});
+  }
+  function go(d){ cur = Math.max(0, Math.min(total-1, cur+d)); render(); }
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'ArrowRight' || e.key === 'ArrowDown') go(1);
+    if(e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   go(-1);
+  });
+  render();
+</script>
+</body>
+</html>

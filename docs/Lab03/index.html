@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lab 03 — My Website</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0f1117; --surface: #1a1d27; --surface2: #22263a;
+    --border: #2e3347; --text: #e8eaf2; --muted: #7880a0;
+    --green: #4ade80; --accent: #818cf8; --radius: 12px;
+    --sans: system-ui, 'Segoe UI', sans-serif;
+  }
+  body { background: var(--bg); color: var(--text); font-family: var(--sans);
+    min-height: 100vh; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; padding: 2rem 1rem; }
+  .card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 16px; padding: 2rem 2.5rem;
+    max-width: 480px; width: 100%; text-align: center;
+  }
+  .lab-num { font-size: 13px; font-weight: 600; color: var(--accent);
+    letter-spacing: .08em; text-transform: uppercase; margin-bottom: .5rem; }
+  h1 { font-size: 24px; font-weight: 700; margin-bottom: .75rem; }
+  p  { font-size: 14px; color: var(--muted); line-height: 1.65; margin-bottom: 1.75rem; }
+  .btn-play {
+    display: block; width: 100%;
+    padding: 12px; border-radius: 10px;
+    background: var(--accent); color: #fff;
+    text-decoration: none; font-size: 16px; font-weight: 600;
+    margin-bottom: .85rem; transition: opacity .15s;
+  }
+  .btn-play:hover { opacity: .85; }
+  .btn-back {
+    display: inline-block; font-size: 13px; color: var(--muted);
+    text-decoration: none; transition: color .15s;
+  }
+  .btn-back:hover { color: var(--text); }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="lab-num">Lab 03</div>
+  <h1>ชื่องาน / ชื่อเกม</h1>
+  <p>คำอธิบายสั้นๆ ว่า Lab นี้ทำอะไร เรียนรู้อะไร หรือมีฟีเจอร์อะไรบ้าง</p>
+
+  <!-- เปลี่ยน lab03.html ให้ตรงกับชื่อไฟล์ที่ Godot export ออกมา -->
+  <a class="btn-play" href="lab03.html">▶&nbsp; เล่นเลย</a>
+
+  <a class="btn-back" href="../">← กลับ Homepage</a>
+</div>
+</body>
+</html>
